@@ -32,7 +32,7 @@ function Navbar() {
   }
 
   return (
-    <div className="fixed top-0 left-0 w-full h-[80px] bg-white shadow-md flex justify-between md:justify-around items-center px-[10px] z-50">
+    <div className="fixed top-0 left-0 w-full h-[80px] bg-white shadow-md flex justify-between md:justify-around items-center z-50">
       <div className="flex justify-center items-center gap-[10px] cursor-pointer">
         <img src={linkedin} alt="logo" className='w-[40px] h-[40px]' />
         {!activeSearch && (
@@ -95,9 +95,7 @@ function Navbar() {
               </span>
             </div>
             <div>
-              <form>
-                <button className='border border-blue-600 rounded-xl w-[200px] text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-150'>See Profile</button>
-              </form>
+             <button className='border border-blue-600 rounded-xl w-[200px] text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-150'>See Profile</button> 
             </div>
             <div className='w-full h-[1px] bg-gray-300'></div>
             <div className='flex justify-start items-center w-full gap-[10px] hover:text-black cursor-pointer transition-colors duration-150'>
