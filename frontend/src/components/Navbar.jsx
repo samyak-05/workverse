@@ -74,7 +74,7 @@ function Navbar() {
         {/* Profile */}
         <div className="cursor-pointer" onClick={() => setActiveProfile(!activeProfile)}>
           <img
-            src={dp}
+            src={userData.profilePic || dp}
             alt="Profile Pic"
             className="w-[60px] h-[60px] rounded-full border-2 border-transparent hover:border-blue-600 transition-all duration-150"
           />
@@ -84,9 +84,9 @@ function Navbar() {
           <div className="h-[300px] w-[300px] absolute bg-white rounded-lg shadow-lg top-[87px] flex flex-col items-center justify-start gap-[15px] p-[15px]">
             <div className="cursor-pointer">
               <img
-                src={dp}
+                src={userData.profilePic || dp}
                 alt="Profile Pic"
-                className="w-[60px] h-[60px] rounded-full border-2 border-transparent hover:border-blue-600 transition-all duration-150"
+                className="w-[80px] h-[80px] rounded-full border-2 border-transparent hover:border-blue-600 transition-all duration-150"
               />
             </div>
             <div>
