@@ -6,6 +6,7 @@ function UserContext({children}) {
     let [userData, setUserData] = useState(null);
     let {serverUrl} = useContext(authDataContext);
     let [editProfileActive, setEditProfileActive] = useState(false);
+    let [createPost, setCreatePost] = useState(false);
 
     const currentUserData = async () =>{
         try {
@@ -24,7 +25,7 @@ function UserContext({children}) {
 
   return (
     <div>
-        <userDataContext.Provider value={{userData, setUserData, editProfileActive, setEditProfileActive}}>
+        <userDataContext.Provider value={{userData, setUserData, editProfileActive, setEditProfileActive, createPost, setCreatePost}}>
       {children}
         </userDataContext.Provider>
     </div>

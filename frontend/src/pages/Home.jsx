@@ -1,17 +1,18 @@
 import React from 'react'
 import Navbar from '../components/Navbar.jsx'
 import dp from '../assets/dp.png'
-import { FaPlus } from "react-icons/fa"
 import { userDataContext } from '../context/UserContext.jsx'
 import { FaPen } from "react-icons/fa";
 import EditProfile from '../components/EditProfile.jsx'
+import CreatePost from '../components/CreatePost.jsx';
 
 
 function Home() {
-  let {userData, editProfileActive, setEditProfileActive} = React.useContext(userDataContext)
+  let {userData, editProfileActive, setEditProfileActive, createPost, setCreatePost} = React.useContext(userDataContext)
   return (
     <div className='w-full min-h-[100vh] bg-[#f2f3ef] flex justify-center items-start md:flex-row pt-[90px] p-[20px] gap-[20px] flex-col'>
       {editProfileActive && <EditProfile />}
+      {createPost && <CreatePost/>}
       <Navbar />
 
       <div className='w-full lg:w-[20%] min-h-[250px] bg-white shadow-lg rounded-lg p-[10px] relative'>
@@ -41,7 +42,17 @@ function Home() {
 
       </div>
 
-      <div className='w-full lg:w-[50%] min-h-[250px] bg-white shadow-lg'></div>
+      <div className="w-full lg:w-[50%] flex flex-col gap-[10px]">
+        <div className='lg:h-[70px] bg-white shadow-lg flex justify-center items-center'>
+          <div>
+            <img src={userData.profilePic} alt="" className="w-[75px] h-[75px] rounded-full p-[7px]"/>
+          </div>
+          <div onClick={()=>setCreatePost(true)} className="border border-gray-500 text-gray-500 p-[15px] rounded-3xl w-[600px] cursor-pointer hover:border-blue-500 hover:text-blue-500">
+            what do you want to talk about....
+          </div>
+        </div>
+        <div className="min-h-[300px] bg-white shadow-lg"></div>
+      </div>
       <div className='w-full lg:w-[25%] min-h-[250px] bg-white shadow-lg'></div>
     </div>
   )
