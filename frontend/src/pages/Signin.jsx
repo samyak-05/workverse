@@ -49,7 +49,7 @@ function Signin() {
         <div className="text-[29px] md:text-[34px] mb-3">Welcome Back!</div>
         <form className="w-[90%] max-w-[400px] h-[350px] md:shadow-xl bg-white flex flex-col justify-start  p-[15px] rounded-md" onSubmit={handleSignin}>
           <label className="text-[20px]" htmlFor='email'>Email: </label>
-          <input type="text" placeholder='enter email' value={email} onChange={(e)=>setEmail(e.target.value)} id="email" className='w-[100%] h-[50px] border-2 border-gray-500 text-gray-700 text-[18px] p-[10px] mb-[15px] rounded-md' required/>
+          <input type="email" placeholder='enter email' value={email} onChange={(e)=>setEmail(e.target.value)} id="email" className='w-[100%] h-[50px] border-2 border-gray-500 text-gray-700 text-[18px] p-[10px] mb-[15px] rounded-md' required/>
           <label className="text-[20px]" htmlFor='password'>Password: </label>
           <div className='relative h-[50px] mb-[15px]'>
           <input type={show?"text":"password"} placeholder='enter password' value={password} onChange={(e)=>setPassword(e.target.value)} id="password" className='border-gray-500 w-[100%] text-gray-700 text-[18px] p-[10px]  rounded-md border-2' required/>
