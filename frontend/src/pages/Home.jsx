@@ -5,10 +5,11 @@ import { userDataContext } from '../context/UserContext.jsx'
 import { FaPen } from "react-icons/fa";
 import EditProfile from '../components/EditProfile.jsx'
 import CreatePost from '../components/CreatePost.jsx';
+import Post from '../components/Post.jsx'
 
 
 function Home() {
-  let {userData, editProfileActive, setEditProfileActive, createPost, setCreatePost} = React.useContext(userDataContext)
+  let {userData, editProfileActive, setEditProfileActive, createPost, setCreatePost, postData, setPostData} = React.useContext(userDataContext)
   return (
     <div className='w-full min-h-[100vh] bg-[#f2f3ef] flex justify-center items-start md:flex-row pt-[90px] p-[20px] gap-[20px] flex-col'>
       {editProfileActive && <EditProfile />}
@@ -51,7 +52,9 @@ function Home() {
             what do you want to talk about....
           </div>
         </div>
-        <div className="min-h-[300px] bg-white shadow-lg"></div>
+        {postData.map((post,index)=>(
+          <Post key={index} id={post._id} content={post.content} author={post.author} like={post.like} comment={post.comment} createdAt={post.createdAt} image={post.image}/>
+        ))}
       </div>
       <div className='w-full lg:w-[25%] min-h-[250px] bg-white shadow-lg'></div>
     </div>

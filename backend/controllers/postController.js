@@ -28,3 +28,14 @@ export const createPost = async (req, res) =>{
         return res.status(500).json({message : err.message});
     }
 }
+
+//Get Posts
+
+export const getPost = async (req,res) =>{
+    try {
+        let post = await Post.find().populate("author","firstName lastName profilePic headline").sort({createdAt:-1});
+        res.status(200).json(post);
+    } catch (err) {
+        res.status(500).json({message: "get post error"});
+    }
+}
