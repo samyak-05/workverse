@@ -10,7 +10,7 @@ function CreatePost() {
     let {serverUrl} = React.useContext(authDataContext);
     let [content, setContent] = React.useState("");
     let [frontendPostImage, setFrontendPostImage] = React.useState("");
-    let [backendPostImage, setBackendPostImage] = React.useState("");
+    let [backendPostImage, setBackendPostImage] = React.useState(null);
     let [loading, setLoading] = React.useState(false);
     let image = useRef();
 
@@ -26,7 +26,7 @@ function CreatePost() {
             let formData = new FormData();
             formData.append("content",content);
             if(backendPostImage){
-                formData.append(backendPostImage);
+                formData.append("image",backendPostImage);
             }
 
             let res = await axios.post(serverUrl+"/api/post/create",formData,{withCredentials : true});
@@ -78,7 +78,7 @@ function CreatePost() {
                             <hr className="bg-[#858585c1] w-[100%] h-[5px] mt-[10px] "></hr>
                             <button className="absolute right-[10px] bg-blue-600 text-white hover:bg-white hover:text-blue-600
                                     border border-blue-600 w-[70px] h-[40px] rounded-md mt-[8px] 
-                                    font-semibold flex items-center justify-center" disabled={loading}
+                                    font-semibold flex items-center justify-center" disabled={loading} type="button"
                                     onClick={handleUpload}>Post <IoMdSend />
                             </button>
                         </form>
