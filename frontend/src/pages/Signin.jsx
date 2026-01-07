@@ -41,8 +41,8 @@ function Signin() {
           <div className="max-w-[1128px] mx-auto px-6 pt-4">
             <img
               src={logo}
-              alt="LinkedIn"
-              className="h-8 w-auto"
+              alt="WorkVerse"
+              className="h-20 w-auto"
             />
           </div>
         </div>
@@ -57,7 +57,7 @@ function Signin() {
           </div>
           <button className='mt-5 bg-[blue] hover:bg-blue-700  text-white rounded-3xl p-[10px] font-bold text-[20px]' disabled={loading}>{loading?"Loading...":"Sign In"}</button>
           {err && <p className='text-red-600 text-center mt-2'>{err}</p>}
-          <div className='text-center mt-[8px]'>Not on LinkedIn? <a href="/signup" className='text-blue-600 font-semibold'>Sign up</a></div>
+          <div className='text-center mt-[8px]'>Not on WorkVerse? <a href="/signup" className='text-blue-600 font-semibold'>Sign up</a></div>
         </form>
       </div>
     )

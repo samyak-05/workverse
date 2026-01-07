@@ -1,5 +1,5 @@
 import React from 'react'
-import linkedin from '../assets/linkedin.png'
+import workverse from '../assets/workverse.png'
 import { CiSearch } from "react-icons/ci";
 import { IoMdHome } from "react-icons/io";
 import { FaPeopleGroup } from "react-icons/fa6";
@@ -34,7 +34,7 @@ function Navbar() {
   return (
     <div className="fixed top-0 left-0 w-full h-[80px] bg-white shadow-md flex justify-between md:justify-around items-center z-50">
       <div className="flex justify-center items-center gap-[10px] cursor-pointer">
-        <img src={linkedin} alt="logo" className='w-[40px] h-[40px]' />
+        <img src={workverse} alt="logo" className='w-[40px] h-[40px]' />
         {!activeSearch && (
           <div className="text-gray-700 text-[25px] lg:hidden" onClick={() => setActiveSearch(true)}>
             <CiSearch />

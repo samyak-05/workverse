@@ -51,7 +51,7 @@ function Signup() {
           <img
             src={logo}
             alt="LinkedIn"
-            className="h-8 w-auto"
+            className="h-20 w-auto"
           />
         </div>
       </div>
@@ -73,7 +73,7 @@ function Signup() {
         <div className='text-[14px] font-light text-center'>By clicking Agree & Join or Continue, you agree to the LinkedIn<a href="/" className='text-blue-700 font-medium'> User Agreement</a>, <a href="/" className='text-blue-700 font-medium'>Privacy Policy</a>, and <a href="/" className='text-blue-700 font-medium'>Cookie Policy</a>.</div>
         <button className='mt-5 bg-[blue] hover:bg-blue-700  text-white rounded-3xl p-[10px] font-bold text-[20px]' disabled={loading}>{loading?"Loading...":"Join & Agree"}</button>
         {err && <p className='text-red-600 text-center mt-2'>{err}</p>}
-        <div className='text-center mt-[8px]'>Already on LinkedIn? <a href="/signin" className='text-blue-600 font-semibold'>Sign in</a></div>
+        <div className='text-center mt-[8px]'>Already on WorkVerse? <a href="/signin" className='text-blue-600 font-semibold'>Sign in</a></div>
       </form>
     </div>
   )
