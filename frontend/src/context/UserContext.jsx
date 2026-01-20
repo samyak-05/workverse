@@ -45,7 +45,7 @@ function UserContext({ children }) {
     <div>
       <userDataContext.Provider value={{
         userData, setUserData, editProfileActive, setEditProfileActive,
-        createPost, setCreatePost, postData, setPostData
+        createPost, setCreatePost, postData, setPostData, getPost
       }}>
         {children}
       </userDataContext.Provider>

@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
 
+const commentSchema = new mongoose.Schema({
+    content: { type: String, required: true },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+}, { timestamps: true });
+
 const postSchema = new mongoose.Schema({
     author : {
         type : mongoose.Schema.Types.ObjectId,
@@ -16,12 +21,7 @@ const postSchema = new mongoose.Schema({
     like : [
         {type: mongoose.Schema.Types.ObjectId, ref : "User" }
     ],
-    comments : [
-        {
-        content : {type : String},
-        author : {type : mongoose.Schema.Types.ObjectId, ref : "User" },
-        }
-    ]
+    comments : [commentSchema]
 }, {timestamps: true});
 
 const Post = mongoose.model("Post", postSchema);

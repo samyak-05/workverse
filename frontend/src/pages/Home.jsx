@@ -53,7 +53,7 @@ function Home() {
           </div>
         </div>
         {postData.map((post,index)=>(
-          <Post key={index} id={post._id} content={post.content} author={post.author} like={post.like} comment={post.comment} createdAt={post.createdAt} image={post.image}/>
+          <Post key={index} id={post._id} content={post.content} author={post.author} like={post.like} comments={post.comments} createdAt={post.createdAt} image={post.image}/>
         ))}
       </div>
       <div className='w-full lg:w-[25%] min-h-[250px] bg-white shadow-lg'></div>
