@@ -8,6 +8,9 @@ import { authDataContext } from '../context/AuthContext'
 import { userDataContext } from '../context/UserContext'
 import moment from 'moment'
 import axios from 'axios'
+import { io } from 'socket.io-client'
+
+let socket = io("http://localhost:4000");
 
 function Post({ id, author, content, like, comments, image, createdAt }) {
   let [more, setMore] = useState(false);
@@ -41,7 +44,7 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
       let res = await axios.post(serverUrl + `/api/post/comment/${id}`, {
         content: commentContent
       }, { withCredentials: true })
-      
+
       // Update local state with the returned populated comments array
       setComment(res.data.comments);
       setCommentContent('');
@@ -49,6 +52,25 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
       console.log(err);
     }
   }
+
+  useEffect(() => {
+    const handleLikeUpdated = ({ postId, likes }) => {
+      if (postId === id) setLikes(likes);
+    };
+
+    const handleCommentUpdated = ({ postId, comments }) => {
+      if (postId === id) setComment(comments);
+    };
+
+    socket.on("likeUpdated", handleLikeUpdated);
+    socket.on("commentUpdated", handleCommentUpdated);
+
+    return () => {
+      socket.off("likeUpdated", handleLikeUpdated);
+      socket.off("commentUpdated", handleCommentUpdated);
+    };
+  }, [id]);
+
 
   useEffect(() => {
     if (contentRef.current) {
@@ -62,7 +84,7 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
   // Combined dependency array to prevent unnecessary loops while maintaining sync
   useEffect(() => {
     getPost();
-  }, [likes.length]); 
+  }, [likes.length]);
 
 
   return (
@@ -127,7 +149,7 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
           <div onClick={likePost} className="cursor-pointer"> <BiSolidLike className="inline-block mr-[3px] text-blue-400 " /><span>Liked</span></div>}
         <div className="cursor-pointer" onClick={() => setShowComment(!showComment)}><FaRegCommentDots className="inline-block hover:text-blue-400 " /> Comment</div>
       </div>
-      
+
       {showComment && <div>
         <form className="w-full px-[20px] mt-[10px]" onSubmit={handleComment}>
           <div className="relative w-full">
@@ -145,7 +167,7 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
             </button>
           </div>
         </form>
-        
+
         <div className="flex flex-col gap-[10px] mt-4">
           {comment && comment.map((cmt, index) => (
             <div key={index} className="flex flex-col gap-[5px] border-b p-[10px] border-gray-100">

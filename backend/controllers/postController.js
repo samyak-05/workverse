@@ -1,5 +1,6 @@
 import uploadToCloudinary from "../utils/cloudinary.js";
 import Post from "../models/post.js";
+import {io} from "../index.js";
 
 //Create Post
 export const createPost = async (req, res) => {
@@ -67,6 +68,7 @@ export const likePost = async (req, res) => {
         }
 
         await post.save();
+        io.emit("likeUpdated", { postId, likes: post.like });
 
         return res.status(200).json(post);
     } catch (err) {
@@ -91,6 +93,7 @@ export const comment = async (req, res) => {
             path: 'comments.author',
             select: 'firstName lastName profilePic headline'
         });
+        io.emit("commentUpdated", { postId: id, comm: updatedPost.comments });
 
         return res.status(200).json(updatedPost); 
     } catch (err) {
