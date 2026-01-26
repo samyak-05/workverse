@@ -54,13 +54,15 @@ function Navbar() {
       <div className="flex justify-center items-center gap-[20px] text-gray-500 relative">
 
         {/* Home */}
-        <div className="md:flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150 hidden">
+        <div className="md:flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150 hidden"
+         onClick={()=>navigate("/")}>
           <IoMdHome className="text-[28px]" />
           <span className="text-[13px] font-semibold">Home</span>
         </div>
 
         {/* Network */}
-        <div className="md:flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150 hidden">
+        <div className="md:flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150 hidden"
+          onClick={()=>navigate("/network")}>
           <FaPeopleGroup className="text-[28px]" />
           <span className="text-[13px] font-semibold">Network</span>
         </div>
@@ -98,7 +100,8 @@ function Navbar() {
              <button className='border border-blue-600 rounded-xl w-[200px] text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-150'>See Profile</button> 
             </div>
             <div className='w-full h-[1px] bg-gray-300'></div>
-            <div className='flex justify-start items-center w-full gap-[10px] hover:text-black cursor-pointer transition-colors duration-150'>
+            <div className='flex justify-start items-center w-full gap-[10px] hover:text-black cursor-pointer transition-colors duration-150'
+              onClick={()=>navigate("/network")}>
               <FaPeopleGroup className="text-[25px]" />
               <span className="text-[20px] font-semibold">My Network</span>
               </div>

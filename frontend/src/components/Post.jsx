@@ -9,6 +9,7 @@ import { userDataContext } from '../context/UserContext'
 import moment from 'moment'
 import axios from 'axios'
 import { io } from 'socket.io-client'
+import ConnectionButton from './ConnectionButton';
 
 let socket = io("http://localhost:4000");
 
@@ -106,8 +107,8 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
           </div>
         </div>
 
-        <div>
-          {/*Button*/}
+        <div className="ml-auto mr-[20px]">
+          {userData._id !== author._id && <ConnectionButton userId={author._id} />}
         </div>
       </div>
 

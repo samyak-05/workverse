@@ -35,7 +35,7 @@ app.get('/', (req,res)=>{
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
-app.use("/api/connection", connectionRouter);
+app.use("/api/connections", connectionRouter);
 
 export const userSocketMap = new Map();
 

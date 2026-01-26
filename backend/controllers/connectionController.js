@@ -1,5 +1,7 @@
-import User from "../models/userModel.js";
+import User from "../models/user.js";
 import Connection from "../models/connection.js";
+import {io, userSocketMap} from "../index.js";
+
 
 // Send Connection Request
 export const sendRequest=async(req,res)=>{
@@ -31,6 +33,18 @@ export const sendRequest=async(req,res)=>{
     }
 
     const request=await Connection.create({sender,reciever:id});
+
+    let recieverSocketId = userSocketMap.get(id);
+    let senderSocketId = userSocketMap.get(sender);
+
+    if(recieverSocketId){
+      io.to(recieverSocketId).emit("newConnectionRequest", { updatedUserId : sender, newStatus:"received" });
+    }
+
+    if(senderSocketId){
+      io.to(senderSocketId).emit("newConnectionRequest", { updatedUserId : id, newStatus:"pending" });
+    }
+
     return res.status(200).json({message:"Request sent",request});
   }catch(error){
     return res.status(500).json({message:"Server error"});
@@ -61,6 +75,17 @@ export const acceptRequest=async(req,res)=>{
     await User.findByIdAndUpdate(connection.sender,{
       $addToSet:{connections:req.userId}
     });
+
+    let recieverSocketId = userSocketMap.get(connection.reciever.toString());
+    let senderSocketId = userSocketMap.get(connection.sender.toString());
+
+    if(recieverSocketId){
+      io.to(recieverSocketId).emit("newConnectionRequest", { updatedUserId : connection.sender.toString(), newStatus:"disconnect" });
+    }
+
+    if(senderSocketId){
+      io.to(senderSocketId).emit("newConnectionRequest", { updatedUserId : connection.reciever.toString(), newStatus:"disconnect" });
+    }
 
     return res.json({message:"Request accepted"});
   }catch(error){
@@ -104,6 +129,17 @@ export const removeConnection=async(req,res)=>{
     await User.findByIdAndUpdate(otherUserId,{
       $pull:{connections:myId}
     });
+
+    let recieverSocketId = userSocketMap.get(otherUserId);
+    let senderSocketId = userSocketMap.get(myId);
+
+    if(recieverSocketId){
+      io.to(recieverSocketId).emit("newConnectionRequest", { updatedUserId : myId, newStatus:"connect" });
+    }
+
+    if(senderSocketId){
+      io.to(senderSocketId).emit("newConnectionRequest", { updatedUserId : otherUserId, newStatus:"connect" });
+    }
 
     return res.json({message:"Connection removed"});
   }catch(error){
