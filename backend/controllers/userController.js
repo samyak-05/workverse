@@ -72,3 +72,26 @@ export const getProfile = async (req, res) =>{
         return res.status(500).json({message : "Internal Server Error!"})
     }
 }
+
+//Search Users
+
+export const search = async (req, res) =>{
+    try {
+        let {query} = req.query;
+
+        if(!query) return res.status(400).json({message : "Query is required"});
+
+        let users = await User.find({
+            $or : [
+                {firstName : {$regex : query, $options: "i"}},
+                {lastName : {$regex : query, $options: "i"}},
+                {username : {$regex : query, $options: "i"}},
+                { skills: { $regex: query, $options: "i" } }
+            ]
+        }).select("-password")
+
+        return res.status(200).json(users);
+    } catch (err) {
+        return res.status(500).json({message : `Error occured ${err}`});
+    }
+}

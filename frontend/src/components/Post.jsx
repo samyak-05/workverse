@@ -24,7 +24,6 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
   let [comment, setComment] = useState(comments || []);
   let [showComment, setShowComment] = useState(false);
 
-  // Syncs local comment state if the parent component's props change (e.g., during getPost)
   useEffect(() => {
     setComment(comments || []);
   }, [comments]);
@@ -46,7 +45,6 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
         content: commentContent
       }, { withCredentials: true })
 
-      // Update local state with the returned populated comments array
       setComment(res.data.comments);
       setCommentContent('');
     } catch (err) {
@@ -82,7 +80,7 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
     }
   }, [content]);
 
-  // Combined dependency array to prevent unnecessary loops while maintaining sync
+
   useEffect(() => {
     getPost();
   }, [likes.length]);
@@ -90,26 +88,32 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
 
   return (
     <div className="bg-white min-h-[200px] p-[10px]">
-      <div className='flex items-start gap-[10px]'>
-        <div className='w-[60px] h-[60px] rounded-full overflow-hidden flex items-center 
-        justify-center cursor-pointer' onClick={()=>getProfile(author.username)}>
+      <div className="flex items-start gap-[10px] min-w-0">
+        <div
+          className="w-[60px] h-[60px] rounded-full overflow-hidden shrink-0 cursor-pointer"
+          onClick={() => getProfile(author.username)}
+        >
           <img src={author.profilePic || dp} alt="" />
         </div>
 
-        <div>
-          <div className='text-[22px] font-bold'>
-            {`${author.firstName} ${author.lastName}`}
+        <div className="flex flex-col min-w-0 flex-1">
+          <div className="text-[22px] font-bold truncate">
+            {author.firstName} {author.lastName}
           </div>
-          <div className='text-[16px]'>
+
+          <div className="text-[16px] text-gray-700 truncate">
             {author.headline}
           </div>
-          <div className='text-[16px]'>
+
+          <div className="text-[14px] text-gray-500">
             {moment(createdAt).fromNow()}
           </div>
         </div>
 
-        <div className="ml-auto mr-[20px]">
-          {userData._id !== author._id && <ConnectionButton userId={author._id} />}
+        <div className="ml-auto mr-[20px] shrink-0">
+          {userData._id !== author._id && (
+            <ConnectionButton userId={author._id} />
+          )}
         </div>
       </div>
 
@@ -122,7 +126,6 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
         {content}
       </div>
 
-      {/* Read More */}
       {showReadMore && (
         <div
           className="font-semibold text-blue-600 pl-[40px] cursor-pointer"
@@ -180,12 +183,10 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
 
                 <div className="flex justify-between w-full">
                   <div className="text-[16px] font-bold">
-                    {/* Reliable check for populated author object */}
                     {cmt.author?.firstName
                       ? `${cmt.author.firstName} ${cmt.author.lastName}`
                       : "User"}
                   </div>
-                  {/* Moment will now show the correct time because the Schema has createdAt */}
                   <div className="text-gray-400">
                     {cmt.createdAt ? moment(cmt.createdAt).fromNow() : "Just now"}
                   </div>
