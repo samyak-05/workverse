@@ -1,6 +1,7 @@
 import { useState, createContext, useContext, useEffect } from 'react'
 import { authDataContext } from './AuthContext.jsx'
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 export const userDataContext = createContext();
 function UserContext({ children }) {
   let [userData, setUserData] = useState(null);
@@ -8,6 +9,8 @@ function UserContext({ children }) {
   let [editProfileActive, setEditProfileActive] = useState(false);
   let [createPost, setCreatePost] = useState(false);
   let [postData, setPostData] = useState([]);
+  let [profileData, setProfileData] = useState([]);
+  let navigate = useNavigate();
 
   const currentUserData = async () => {
     try {
@@ -30,6 +33,16 @@ function UserContext({ children }) {
     }
   }
 
+  const getProfile = async (username) =>{
+    try {
+      let res = await axios.get(`${serverUrl}/api/user/profile/${username}`, {withCredentials :true});
+      setProfileData(res.data);
+      navigate("/profile");
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   useEffect(() => {
     currentUserData();
   }, []);
@@ -45,7 +58,8 @@ function UserContext({ children }) {
     <div>
       <userDataContext.Provider value={{
         userData, setUserData, editProfileActive, setEditProfileActive,
-        createPost, setCreatePost, postData, setPostData, getPost
+        createPost, setCreatePost, postData, setPostData, getPost , profileData, setProfileData,
+        getProfile
       }}>
         {children}
       </userDataContext.Provider>

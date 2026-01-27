@@ -55,3 +55,20 @@ export const updateProfile = async(req,res) =>{
         return res.status(500).json({message:"Profile Update Error", error: err.message});
     }
 }
+
+//See Profile
+
+export const getProfile = async (req, res) =>{
+    try {
+        let {username} = req.params;
+        let user = await User.findOne({username}).select("-password");
+
+        if(!user){
+            return res.status(400).json({message : "User does not exsists !"});
+        }
+
+        return res.status(200).json(user);
+    } catch (err) {
+        return res.status(500).json({message : "Internal Server Error!"})
+    }
+}

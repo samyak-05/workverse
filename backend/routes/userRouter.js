@@ -1,5 +1,5 @@
 import express from "express";
-import { getCurrUser, updateProfile } from "../controllers/userController.js";
+import { getCurrUser, getProfile, updateProfile } from "../controllers/userController.js";
 import isAuth from "../middlewares/isAuth.js";
 import upload from "../middlewares/multer.js";
 
@@ -11,5 +11,6 @@ Router.put("/updateProfile",isAuth, upload.fields([
     {name : "profilePic", maxCount: 1},
     {name : "coverPic", maxCount: 1}
 ]), updateProfile);
+Router.get("/profile/:username", isAuth, getProfile)
 
 export default Router;

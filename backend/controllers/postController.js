@@ -35,7 +35,7 @@ export const createPost = async (req, res) => {
 export const getPost = async (req, res) => {
     try {
         let post = await Post.find()
-            .populate("author", "firstName lastName profilePic headline")
+            .populate("author", "firstName lastName profilePic headline username")
             // ADDED: Deep populate for comments
             .populate({
                 path: "comments.author",

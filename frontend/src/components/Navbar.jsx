@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 function Navbar() {
   let [activeSearch, setActiveSearch] = React.useState(false);
   let [activeProfile, setActiveProfile] = React.useState(false);
-  let { userData, setUserData } = React.useContext(userDataContext);
+  let { userData, setUserData, getProfile} = React.useContext(userDataContext);
   let {serverUrl} = React.useContext(authDataContext);
   let navigate = useNavigate();
 
@@ -34,7 +34,7 @@ function Navbar() {
   return (
     <div className="fixed top-0 left-0 w-full h-[80px] bg-white shadow-md flex justify-between md:justify-around items-center z-50">
       <div className="flex justify-center items-center gap-[10px] cursor-pointer">
-        <img src={workverse} alt="logo" className='w-[40px] h-[40px]' />
+        <img src={workverse} alt="logo" className='w-[40px] h-[40px]' onClick={()=>{navigate("/")}} />
         {!activeSearch && (
           <div className="text-gray-700 text-[25px] lg:hidden" onClick={() => setActiveSearch(true)}>
             <CiSearch />
@@ -97,7 +97,8 @@ function Navbar() {
               </span>
             </div>
             <div>
-             <button className='border border-blue-600 rounded-xl w-[200px] text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-150'>See Profile</button> 
+             <button className='border border-blue-600 rounded-xl w-[200px] text-blue-600 hover:bg-blue-600
+              hover:text-white transition-all duration-150' onClick={()=>getProfile(userData.username)}>See Profile</button> 
             </div>
             <div className='w-full h-[1px] bg-gray-300'></div>
             <div className='flex justify-start items-center w-full gap-[10px] hover:text-black cursor-pointer transition-colors duration-150'
