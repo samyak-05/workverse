@@ -1,5 +1,5 @@
 import express from "express";
-import { getCurrUser, getProfile, updateProfile, search } from "../controllers/userController.js";
+import { getCurrUser, getProfile, updateProfile, search, suggestedUser } from "../controllers/userController.js";
 import isAuth from "../middlewares/isAuth.js";
 import upload from "../middlewares/multer.js";
 
@@ -13,5 +13,6 @@ Router.put("/updateProfile",isAuth, upload.fields([
 ]), updateProfile);
 Router.get("/profile/:username", isAuth, getProfile)
 Router.get("/search", isAuth, search);
+Router.get("/suggesteduser", isAuth, suggestedUser)
 
 export default Router;

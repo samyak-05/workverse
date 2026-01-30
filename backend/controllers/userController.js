@@ -95,3 +95,21 @@ export const search = async (req, res) =>{
         return res.status(500).json({message : `Error occured ${err}`});
     }
 }
+
+//Get Suggested User
+
+export const suggestedUser = async (req, res) => {
+    try {
+        let currUser = await User.findById(req.userId).select("connections");
+
+        let suggestedUser = await User.find({
+           _id : {
+             $ne : currUser, $nin : currUser.connections
+           }
+        }).select("-password")
+
+        return res.status(200).json(suggestedUser);
+    } catch (err){
+        return res.status(500).json({message : `Error : ${err}`});
+    }
+}

@@ -88,7 +88,7 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
 
   return (
     <div className="bg-white min-h-[200px] p-[10px]">
-      <div className="flex items-start gap-[10px] min-w-0">
+      <div className="flex items-start gap-[10px] min-w-0"> 
         <div
           className="w-[60px] h-[60px] rounded-full overflow-hidden shrink-0 cursor-pointer"
           onClick={() => getProfile(author.username)}
