@@ -10,6 +10,7 @@ function UserContext({ children }) {
   let [createPost, setCreatePost] = useState(false);
   let [postData, setPostData] = useState([]);
   let [profileData, setProfileData] = useState([]);
+  let [postAdded, setPostAdded] = useState(0);
   let navigate = useNavigate();
 
   const currentUserData = async () => {
@@ -59,7 +60,7 @@ function UserContext({ children }) {
       <userDataContext.Provider value={{
         userData, setUserData, editProfileActive, setEditProfileActive,
         createPost, setCreatePost, postData, setPostData, getPost , profileData, setProfileData,
-        getProfile
+        getProfile, postAdded, setPostAdded
       }}>
         {children}
       </userDataContext.Provider>

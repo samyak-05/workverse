@@ -17,7 +17,7 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
   let [more, setMore] = useState(false);
   const [showReadMore, setShowReadMore] = useState(false);
   const contentRef = useRef(null);
-  let { getPost, userData, getProfile } = useContext(userDataContext)
+  let { getPost, userData, getProfile, postAdded } = useContext(userDataContext)
   let { serverUrl } = useContext(authDataContext);
   let [likes, setLikes] = useState(like || []);
   let [commentContent, setCommentContent] = useState('');
@@ -83,7 +83,7 @@ function Post({ id, author, content, like, comments, image, createdAt }) {
 
   useEffect(() => {
     getPost();
-  }, [likes.length]);
+  }, [likes.length,postAdded]);
 
 
   return (

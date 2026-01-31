@@ -12,7 +12,7 @@ import ConnectionButton from '../components/ConnectionButton.jsx';
 
 
 function Home() {
-  let { userData, editProfileActive, setEditProfileActive, createPost, setCreatePost, postData, setPostData } = useContext(userDataContext);
+  let { userData, editProfileActive, setEditProfileActive, createPost, setCreatePost, postData, setPostData, getProfile } = useContext(userDataContext);
   let { serverUrl } = useContext(authDataContext);
   let [suggested, setSuggested] = useState([]);
 
@@ -86,14 +86,14 @@ function Home() {
             <div
               key={user._id}
               className="flex items-center justify-between">
-              <div className="flex items-center gap-[10px] w-[220px] min-w-0">
+              <div className="flex items-center gap-[10px] w-[220px] min-w-0 cursor-pointer" onClick={()=>getProfile(user.username)}>
                 <img
                   src={user.profilePic || dp}
                   alt=""
                   className="w-[45px] h-[45px] rounded-full object-cover flex-shrink-0"
                 />
 
-                <div className="flex flex-col min-w-0">
+                <div className="flex flex-col min-w-0 cursor-pointer" onClick={()=>getProfile(user.username)}>
                   <span className="text-[14px] font-semibold truncate">
                     {user.firstName} {user.lastName}
                   </span>

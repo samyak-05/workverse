@@ -6,7 +6,7 @@ import {authDataContext} from '../context/AuthContext'
 import axios from 'axios';
 
 function CreatePost() {
-    let { createPost, setCreatePost, userData, setUserData } = React.useContext(userDataContext);
+    let { createPost, setCreatePost, userData, setUserData, postAdded, setPostAdded } = React.useContext(userDataContext);
     let {serverUrl} = React.useContext(authDataContext);
     let [content, setContent] = React.useState("");
     let [frontendPostImage, setFrontendPostImage] = React.useState("");
@@ -30,6 +30,7 @@ function CreatePost() {
             }
 
             let res = await axios.post(serverUrl+"/api/post/create",formData,{withCredentials : true});
+            setPostAdded((prev)=>prev+1);
             setLoading(false);
             setCreatePost(false);
 
