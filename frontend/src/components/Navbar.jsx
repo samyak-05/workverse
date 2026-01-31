@@ -9,11 +9,12 @@ import { userDataContext } from '../context/UserContext';
 import { authDataContext } from '../context/AuthContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FaPencilAlt } from "react-icons/fa";
 
 function Navbar() {
   let [activeSearch, setActiveSearch] = useState(false);
   let [activeProfile, setActiveProfile] = useState(false);
-  let { userData, setUserData, getProfile } = useContext(userDataContext);
+  let { userData, setUserData, getProfile, createPost, setCreatePost } = useContext(userDataContext);
   let { serverUrl } = useContext(authDataContext);
   let [searchInput, setSearchInput] = useState("");
   let [searchData, setSearchData] = useState([]);
@@ -95,27 +96,29 @@ function Navbar() {
 
       <div className="flex justify-center items-center gap-[20px] text-gray-500 relative">
 
-        {/* Home */}
         <div className="md:flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150 hidden"
           onClick={() => navigate("/")}>
           <IoMdHome className="text-[28px]" />
           <span className="text-[13px] font-semibold">Home</span>
         </div>
 
-        {/* Network */}
         <div className="md:flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150 hidden"
           onClick={() => navigate("/network")}>
           <FaPeopleGroup className="text-[28px]" />
           <span className="text-[13px] font-semibold">Network</span>
         </div>
 
-        {/* Notifications */}
+        {!activeSearch && <div className="flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150 sm:inline md:hidden"
+          onClick={()=>setCreatePost(true)}>
+          <FaPencilAlt className="text-[20px] md:text-[28px]" />
+          <span className="md:inline text-[13px] font-semibold hidden">Notifications</span>
+        </div>}
+
         <div className="flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150">
           <IoIosNotifications className="text-[30px] md:text-[28px]" />
           <span className="md:inline text-[13px] font-semibold hidden">Notifications</span>
         </div>
 
-        {/* Profile */}
         <div className="cursor-pointer" onClick={() => setActiveProfile(!activeProfile)}>
           <img
             src={userData.profilePic || dp}
@@ -125,7 +128,7 @@ function Navbar() {
         </div>
 
         {activeProfile && (
-          <div className="h-[300px] w-[300px] absolute bg-white rounded-lg shadow-lg top-[87px] flex flex-col items-center justify-start gap-[15px] p-[15px]">
+          <div className="md:h-[300px] md:w-[300px] sm:w-[200px] absolute bg-white rounded-lg shadow-lg top-[87px] right-[5px] flex flex-col items-center justify-start gap-[15px] p-[15px]">
             <div className="cursor-pointer">
               <img
                 src={userData.profilePic || dp}
