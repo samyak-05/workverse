@@ -11,7 +11,7 @@ import axios from 'axios'
 import { io } from 'socket.io-client'
 import ConnectionButton from './ConnectionButton';
 
-let socket = io("http://localhost:4000");
+let socket = io(import.meta.env.VITE_SERVER_URL);
 
 function Post({ id, author, content, like, comments, image, createdAt }) {
   let [more, setMore] = useState(false);

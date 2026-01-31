@@ -5,7 +5,7 @@ import axios from 'axios'
 import io from 'socket.io-client'
 import { useNavigate } from 'react-router-dom'
 
-const socket = io("http://localhost:4000");
+const socket = io(import.meta.env.VITE_SERVER_URL);
 function ConnectionButton({ userId }) {
     const { serverUrl } = useContext(authDataContext)
     const { userData } = useContext(userDataContext)
