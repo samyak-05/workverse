@@ -60,7 +60,7 @@ function Navbar() {
           text-gray-700 text-[22px]">No accounts found !</div>}
           {searchData.map((sea) => (
             <div key={sea._id}
-              className="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer border-b-2 border-b-gray-300"
+              className="flex items-center gap-3 p-3 max-h-[500px] hover:bg-gray-100 cursor-pointer border-b-2 border-b-gray-300 overflow-auto"
               onClick={()=>{getProfile(sea.username)
                   setSearchInput("");
               }}>
@@ -111,10 +111,11 @@ function Navbar() {
         {!activeSearch && <div className="flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150 sm:inline md:hidden"
           onClick={()=>setCreatePost(true)}>
           <FaPencilAlt className="text-[20px] md:text-[28px]" />
-          <span className="md:inline text-[13px] font-semibold hidden">Notifications</span>
+          <span className="md:inline text-[13px] font-semibold hidden">Post</span>
         </div>}
 
-        <div className="flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150">
+        <div className="flex flex-col items-center cursor-pointer hover:text-black transition-colors duration-150"
+         onClick={() => navigate("/notifications")}>
           <IoIosNotifications className="text-[30px] md:text-[28px]" />
           <span className="md:inline text-[13px] font-semibold hidden">Notifications</span>
         </div>

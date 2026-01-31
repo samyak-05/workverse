@@ -1,6 +1,7 @@
 import uploadToCloudinary from "../utils/cloudinary.js";
 import Post from "../models/post.js";
 import {io} from "../index.js";
+import Notification from "../models/notification.js";
 
 //Create Post
 export const createPost = async (req, res) => {
@@ -65,6 +66,14 @@ export const likePost = async (req, res) => {
 
         else {
             post.like.push(userId);
+            if(post.author!=userId){
+                await Notification.create({
+                receiver: post.author,
+                type: "comment",
+                relatedUser: userId,
+                relatedPost: id
+                });
+            }
         }
 
         await post.save();
@@ -85,6 +94,11 @@ export const comment = async (req, res) => {
         const { content } = req.body;
         const userId = req.userId;
 
+        // Fetch post first
+        const post = await Post.findById(id);
+        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        // Push comment and populate comments.author
         const updatedPost = await Post.findByIdAndUpdate(
             id,
             { $push: { comments: { content, author: userId } } },
@@ -93,10 +107,23 @@ export const comment = async (req, res) => {
             path: 'comments.author',
             select: 'firstName lastName profilePic headline'
         });
-        io.emit("commentUpdated", { postId: id, comm: updatedPost.comments });
 
-        return res.status(200).json(updatedPost); 
+        if(post.author!=userId){
+            await Notification.create({
+            receiver: post.author,
+            type: "comment",
+            relatedUser: userId,
+            relatedPost: id
+        });
+        }
+        
+
+        // Emit socket update
+        io.emit("commentUpdated", { postId: id, comments: updatedPost.comments });
+
+        return res.status(200).json(updatedPost);
     } catch (err) {
-        return res.status(400).json({ message: err.message });
+        console.log(err); // log for debugging
+        return res.status(500).json({ message: err.message });
     }
 }

@@ -1,225 +1,232 @@
 import User from "../models/user.js";
 import Connection from "../models/connection.js";
-import {io, userSocketMap} from "../index.js";
+import Notification from "../models/notification.js";
+import { io, userSocketMap } from "../index.js";
 
 
 // Send Connection Request
-export const sendRequest=async(req,res)=>{
-  try{
-    const id=req.params.id;
-    const sender=req.userId;
+export const sendRequest = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const sender = req.userId;
 
-    if(sender===id){
-      return res.status(400).json({message:"Can't send request to yourself"});
+    if (sender === id) {
+      return res.status(400).json({ message: "Can't send request to yourself" });
     }
 
-    const user=await User.findById(sender);
-    if(!user){
-      return res.status(404).json({message:"User not found"});
+    const user = await User.findById(sender);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    if(user.connections.includes(id)){
-      return res.status(400).json({message:"Already connected"});
+    if (user.connections.includes(id)) {
+      return res.status(400).json({ message: "Already connected" });
     }
 
-    const existing= await Connection.findOne({
+    const existing = await Connection.findOne({
       sender,
-      reciever:id,
-      status:"Pending"
+      reciever: id,
+      status: "Pending"
     });
 
-    if(existing){
-      return res.status(400).json({message:"Request already sent"});
+    if (existing) {
+      return res.status(400).json({ message: "Request already sent" });
     }
 
-    const request=await Connection.create({sender,reciever:id});
+    const request = await Connection.create({ sender, reciever: id });
 
     let recieverSocketId = userSocketMap.get(id);
     let senderSocketId = userSocketMap.get(sender);
 
-    if(recieverSocketId){
-      io.to(recieverSocketId).emit("newConnectionRequest", { updatedUserId : sender, newStatus:"received" });
+    if (recieverSocketId) {
+      io.to(recieverSocketId).emit("newConnectionRequest", { updatedUserId: sender, newStatus: "received" });
     }
 
-    if(senderSocketId){
-      io.to(senderSocketId).emit("newConnectionRequest", { updatedUserId : id, newStatus:"pending" });
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("newConnectionRequest", { updatedUserId: id, newStatus: "pending" });
     }
 
-    return res.status(200).json({message:"Request sent",request});
-  }catch(error){
-    return res.status(500).json({message:"Server error"});
+    return res.status(200).json({ message: "Request sent", request });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
 // Accept Connection Request
-export const acceptRequest=async(req,res)=>{
-  try{
-    const connectionId=req.params.connectionId;
+export const acceptRequest = async (req, res) => {
+  try {
+    const connectionId = req.params.connectionId;
 
-    const connection=await Connection.findById(connectionId);
-    if(!connection){
-      return res.status(404).json({message:"Request not found"});
+    const connection = await Connection.findById(connectionId);
+    if (!connection) {
+      return res.status(404).json({ message: "Request not found" });
     }
 
-    if(connection.status!=="Pending"){
-      return res.status(400).json({message:"Request already processed"});
+    if (connection.status !== "Pending") {
+      return res.status(400).json({ message: "Request already processed" });
     }
 
-    connection.status="Accepted";
+    connection.status = "Accepted";
     await connection.save();
 
-    await User.findByIdAndUpdate(req.userId,{
-      $addToSet:{connections:connection.sender}
+    await User.findByIdAndUpdate(req.userId, {
+      $addToSet: { connections: connection.sender }
     });
 
-    await User.findByIdAndUpdate(connection.sender,{
-      $addToSet:{connections:req.userId}
+    await User.findByIdAndUpdate(connection.sender, {
+      $addToSet: { connections: req.userId }
     });
+
+    let notification = await Notification.create({
+      receiver: connection.sender,
+      type: "connectionAccepted",
+      relatedUser: connection.reciever,
+    })
 
     let recieverSocketId = userSocketMap.get(connection.reciever.toString());
     let senderSocketId = userSocketMap.get(connection.sender.toString());
 
-    if(recieverSocketId){
-      io.to(recieverSocketId).emit("newConnectionRequest", { updatedUserId : connection.sender.toString(), newStatus:"disconnect" });
+    if (recieverSocketId) {
+      io.to(recieverSocketId).emit("newConnectionRequest", { updatedUserId: connection.sender.toString(), newStatus: "disconnect" });
     }
 
-    if(senderSocketId){
-      io.to(senderSocketId).emit("newConnectionRequest", { updatedUserId : connection.reciever.toString(), newStatus:"disconnect" });
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("newConnectionRequest", { updatedUserId: connection.reciever.toString(), newStatus: "disconnect" });
     }
 
-    return res.json({message:"Request accepted"});
-  }catch(error){
-    return res.status(500).json({message:"Server error"});
+    return res.json({ message: "Request accepted" });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
 // Reject Connection Request
-export const rejectRequest=async(req,res)=>{
-  try{
-    const connectionId=req.params.connectionId;
+export const rejectRequest = async (req, res) => {
+  try {
+    const connectionId = req.params.connectionId;
 
-    const connection=await Connection.findById(connectionId);
-    if(!connection){
-      return res.status(404).json({message:"Request not found"});
+    const connection = await Connection.findById(connectionId);
+    if (!connection) {
+      return res.status(404).json({ message: "Request not found" });
     }
 
-    if(connection.status!=="Pending"){
-      return res.status(400).json({message:"Request already processed"});
+    if (connection.status !== "Pending") {
+      return res.status(400).json({ message: "Request already processed" });
     }
 
-    connection.status="Rejected";
+    connection.status = "Rejected";
     await connection.save();
 
-    return res.json({message:"Request rejected"});
-  }catch(error){
-    return res.status(500).json({message:"Server error"});
+    return res.json({ message: "Request rejected" });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
 // Remove Connection
-export const removeConnection=async(req,res)=>{
-  try{
-    const myId=req.userId;
-    const otherUserId=req.params.userId;
+export const removeConnection = async (req, res) => {
+  try {
+    const myId = req.userId;
+    const otherUserId = req.params.userId;
 
-    await User.findByIdAndUpdate(myId,{
-      $pull:{connections:otherUserId}
+    await User.findByIdAndUpdate(myId, {
+      $pull: { connections: otherUserId }
     });
 
-    await User.findByIdAndUpdate(otherUserId,{
-      $pull:{connections:myId}
+    await User.findByIdAndUpdate(otherUserId, {
+      $pull: { connections: myId }
     });
 
     let recieverSocketId = userSocketMap.get(otherUserId);
     let senderSocketId = userSocketMap.get(myId);
 
-    if(recieverSocketId){
-      io.to(recieverSocketId).emit("newConnectionRequest", { updatedUserId : myId, newStatus:"connect" });
+    if (recieverSocketId) {
+      io.to(recieverSocketId).emit("newConnectionRequest", { updatedUserId: myId, newStatus: "connect" });
     }
 
-    if(senderSocketId){
-      io.to(senderSocketId).emit("newConnectionRequest", { updatedUserId : otherUserId, newStatus:"connect" });
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("newConnectionRequest", { updatedUserId: otherUserId, newStatus: "connect" });
     }
 
-    return res.json({message:"Connection removed"});
-  }catch(error){
-    return res.status(500).json({message:"removeConnection error"});
+    return res.json({ message: "Connection removed" });
+  } catch (error) {
+    return res.status(500).json({ message: "removeConnection error" });
   }
 };
 
 // Get Connection Status
-export const getConnectionStatus=async(req,res)=>{
-  try{
-    const targetUserId=req.params.userId;
-    const currentUserId=req.userId;
+export const getConnectionStatus = async (req, res) => {
+  try {
+    const targetUserId = req.params.userId;
+    const currentUserId = req.userId;
 
-    if(currentUserId===targetUserId){
-      return res.json({status:"self"});
+    if (currentUserId === targetUserId) {
+      return res.json({ status: "self" });
     }
 
-    const user=await User.findById(currentUserId).select("connections");
-    if(!user){
-      return res.status(404).json({message:"User not found"});
+    const user = await User.findById(currentUserId).select("connections");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    if(user.connections.includes(targetUserId)){
-      return res.json({status:"disconnect"});
+    if (user.connections.includes(targetUserId)) {
+      return res.json({ status: "disconnect" });
     }
 
-    const pending=await Connection.findOne({
-      $or:[
-        {sender:currentUserId,reciever:targetUserId},
-        {sender:targetUserId,reciever:currentUserId}
+    const pending = await Connection.findOne({
+      $or: [
+        { sender: currentUserId, reciever: targetUserId },
+        { sender: targetUserId, reciever: currentUserId }
       ],
-      status:"Pending"
+      status: "Pending"
     });
 
-    if(pending){
-      if(pending.sender.toString()===currentUserId){
-        return res.json({status:"pending"});
+    if (pending) {
+      if (pending.sender.toString() === currentUserId) {
+        return res.json({ status: "pending" });
       }
-      return res.json({status:"received",requestId:pending._id});
+      return res.json({ status: "received", requestId: pending._id });
     }
 
-    return res.json({status:"connect"});
-  }catch(error){
-    return res.status(500).json({message:"getConnectionStatus error"});
+    return res.json({ status: "connect" });
+  } catch (error) {
+    return res.status(500).json({ message: "getConnectionStatus error" });
   }
 };
 
 // Get Incoming Requests
-export const getConnectionRequests=async(req,res)=>{
-  try{
-    const userId=req.userId;
+export const getConnectionRequests = async (req, res) => {
+  try {
+    const userId = req.userId;
 
-    const requests=await Connection.find({
-      reciever:userId,
-      status:"Pending"
+    const requests = await Connection.find({
+      reciever: userId,
+      status: "Pending"
     }).populate(
       "sender",
       "firstName lastName username profilePic headline"
     );
 
     return res.json(requests);
-  }catch(error){
-    return res.status(500).json({message:"Server error"});
+  } catch (error) {
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
 // Get User Connections
-export const getUserConnections=async(req,res)=>{
-  try{
-    const user=await User.findById(req.userId).populate(
+export const getUserConnections = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).populate(
       "connections",
       "firstName lastName username profilePic headline"
     );
 
-    if(!user){
-      return res.status(404).json({message:"User not found"});
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
     return res.json(user.connections);
-  }catch(error){
-    return res.status(500).json({message:"Server error"});
+  } catch (error) {
+    return res.status(500).json({ message: "Server error" });
   }
 };
