@@ -20,14 +20,13 @@ function Navbar() {
   let [searchData, setSearchData] = useState([]);
   let navigate = useNavigate();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     try {
-      let res = axios.get(serverUrl + "/api/auth/signout", { withCredentials: true });
+      let res = await axios.post(serverUrl + "/api/auth/signout", { withCredentials: true });
       setUserData(null);
       navigate("/signin");
     } catch (err) {
       console.log("Error during logout:", err);
-      return res.status(500).json({ message: "Logout failed" });
     }
   }
 

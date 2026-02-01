@@ -5,6 +5,6 @@ let Router = express.Router();
 //SignUp Route
 Router.post("/signup", signUp);
 Router.post("/signin", signIn);
-Router.get("/signout", signOut);
+Router.post("/signout", signOut);
 
 export default Router;
