@@ -22,7 +22,7 @@ function Navbar() {
 
   const handleSignOut = async () => {
     try {
-      let res = await axios.post(serverUrl + "/api/auth/signout", { withCredentials: true });
+      let res = await axios.post(serverUrl + "/api/auth/signout", {}, { withCredentials: true });
       setUserData(null);
       navigate("/signin");
     } catch (err) {

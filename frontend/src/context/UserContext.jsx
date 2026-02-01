@@ -17,7 +17,6 @@ function UserContext({ children }) {
     try {
       let result = await axios.get(serverUrl + "/api/user/currentuser", { withCredentials: true });
       setUserData(result.data);
-      console.log("Current User Data:", result.data);
     } catch (err) {
       console.log("Error in fetching user data", err);
       setUserData(null);
