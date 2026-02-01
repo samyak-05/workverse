@@ -8,7 +8,7 @@ import { authDataContext } from '../context/AuthContext.jsx';
 function EditProfile() {
     let {serverUrl} = React.useContext(authDataContext);
     let [saving, setSaving] = React.useState(false);
-    let {setEditProfileActive, editProfileActive, userData, setUserData, setProfileData} = React.useContext(userDataContext);
+    let {setEditProfileActive, editProfileActive, userData, setUserData} = React.useContext(userDataContext);
     let [firstName, setFirstName] = React.useState(userData.firstName || "");
     let [lastName, setLastName] = React.useState(userData.lastName || "");
     let [headline, setHeadline] = React.useState(userData.headline || "");
@@ -121,18 +121,9 @@ function EditProfile() {
                 formData.append("coverPic", backendCoverPic);
             }
 
-            // Debug: log FormData entries to ensure files are attached
-            for (let pair of formData.entries()) {
-                console.log('formData entry:', pair[0], pair[1]);
-            }
-
-            const result = await axios.put(`${serverUrl}/api/user/updateProfile`, formData, {
-                withCredentials: true,
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            const result = await axios.put(`${serverUrl}/api/user/updateProfile`, formData, {withCredentials: true});
             console.log("Profile updated successfully:", result.data);
             setUserData(result.data);
-            if (typeof setProfileData === 'function') setProfileData(result.data);
             setEditProfileActive(false);
             setSaving(false);
         } catch(err) {
