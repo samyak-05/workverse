@@ -18,33 +18,40 @@ function Signup() {
   let [err,setErr] = useState("");
   let navigate = useNavigate();
 
-  const handleSignup = async (e) =>{
-    e.preventDefault();
-    setLoading(true);
-    try{
-      let res = await axios.post(serverUrl+"/api/auth/signup",{
-        firstName,
-        lastName,
-        username,
-        email,
-        password
-      },{withCredentials:true});
-      console.log(res);
-      setUserData(res.data);
-      navigate("/");
-      setFirstName("");
-      setLastName("");
-      setUserName("");
-      setEmail("");
-      setPassword("");
-      setLoading(false);
-      setErr(false);
-    } catch(err){
-      setErr(err.response?.data?.message || err.message);
-      setLoading(false);
-      console.log("Error during signup:", err);
-    }
+  const handleSignup = async (e) => {
+  e.preventDefault();
+
+  const payload = {
+    firstName,
+    lastName,
+    username,
+    email,
+    password
+  };
+
+  setLoading(true);
+
+  try {
+    const res = await axios.post(
+      serverUrl + "/api/auth/signup",
+      payload,
+      { withCredentials: true }
+    );
+
+    setUserData(res.data);
+    navigate("/");
+    setFirstName("");
+    setLastName("");
+    setUserName("");
+    setEmail("");
+    setPassword("");
+    setErr("");
+  } catch (err) {
+    setErr(err.response?.data?.message || err.message);
+  } finally {
+    setLoading(false);
   }
+};
   return (
     <div className="w-full min-h-screen bg-[#F3F2F0] flex flex-col items-center justify-start">
       <div className="w-full mb-3">
