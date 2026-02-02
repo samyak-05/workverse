@@ -2,7 +2,7 @@ import User from "../models/user.js";
 import bcryptjs from "bcryptjs";
 import genToken from "../utils/token.js";
 
-// SignUp Controller - FIXED
+// SignUp Controller
 export const signUp = async (req, res) => {
     try {
         let { firstName, lastName, username, email, password } = req.body;
@@ -35,7 +35,7 @@ export const signUp = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -71,7 +71,7 @@ export const signIn = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -89,7 +89,7 @@ export const signOut = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax"
+      sameSite: "none"
     });
     return res.status(200).json({ message: "SignOut Successful" });
   } catch (err) {
