@@ -69,7 +69,7 @@ export const likePost = async (req, res) => {
             if(post.author!=userId){
                 await Notification.create({
                 receiver: post.author,
-                type: "comment",
+                type: "like",
                 relatedUser: userId,
                 relatedPost: postId
                 });
