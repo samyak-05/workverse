@@ -63,7 +63,6 @@ function Profile() {
 
                         <div
                             className="font-semibold text-[18px] text-blue-500 cursor-pointer hover:opacity-[0.8]"
-                            onClick={() => navigate("/network")}
                         >
                             {profileData.connections.length} Connections
                         </div>
