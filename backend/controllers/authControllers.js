@@ -2,14 +2,12 @@ import User from "../models/user.js";
 import bcryptjs from "bcryptjs";
 import genToken from "../utils/token.js";
 
-//SignUp Controller
-
+// SignUp Controller - FIXED
 export const signUp = async (req, res) => {
     try {
         let { firstName, lastName, username, email, password } = req.body;
 
-        //Check pre-exsisting user
-
+        // Check pre-existing user
         let prevUser = await User.findOne({ $or: [{ email: email }, { username: username }] });
         if (prevUser) {
             return res.status(400).json({ message: "User already exists with given email or username" });
@@ -18,7 +16,6 @@ export const signUp = async (req, res) => {
         if (!firstName || !lastName) {
             return res.status(400).json({ message: "First and last name are required" });
         }
-
 
         if (password.length < 8) {
             return res.status(400).json({ message: "Password must be at least 8 characters long" });
@@ -38,25 +35,24 @@ export const signUp = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
+            sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        return res.status(201).json({ message: "User created successfully" });
-    }
+        // RETURN THE USER OBJECT SO FRONTEND CONTEXT UPDATES IMMEDIATELY
+        const safeUser = await User.findById(user._id).select("-password -__v");
+        return res.status(201).json(safeUser); 
 
-    catch (err) {
+    } catch (err) {
         console.log("Error during signup:", err.message);
         return res.status(500).json({
             message: "Error during signup",
             error: err.message
         });
     }
-
 }
 
-//SignIn Controller
-
+// SignIn Controller
 export const signIn = async (req, res) => {
     try {
         let { email, password } = req.body;
@@ -75,25 +71,25 @@ export const signIn = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
+            sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        return res.status(200).json(user);
+        const safeUser = await User.findById(user._id).select("-password -__v -createdAt -updatedAt");
+        return res.status(200).json(safeUser);
     } catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Error in SignIn", error: err.message });
     }
 };
 
-//SignOut Controller
-
+// SignOut Controller
 export const signOut = async (req, res) => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none"
+      sameSite: "lax"
     });
     return res.status(200).json({ message: "SignOut Successful" });
   } catch (err) {

@@ -71,7 +71,7 @@ export const likePost = async (req, res) => {
                 receiver: post.author,
                 type: "comment",
                 relatedUser: userId,
-                relatedPost: id
+                relatedPost: postId
                 });
             }
         }

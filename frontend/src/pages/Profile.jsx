@@ -10,7 +10,7 @@ import { FaArrowRight } from "react-icons/fa";
 import ConnectionButton from '../components/ConnectionButton';
 
 function Profile() {
-    let { userData, setEditProfileActive, editProfileActive, profileData } = useContext(userDataContext);
+    let { userData, setEditProfileActive, editProfileActive, profileData} = useContext(userDataContext);
     let navigate = useNavigate();
     let { postData } = useContext(userDataContext);
     let [userPosts, setUserPosts] = useState([])

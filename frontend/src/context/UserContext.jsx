@@ -2,7 +2,9 @@ import { useState, createContext, useContext, useEffect } from 'react'
 import { authDataContext } from './AuthContext.jsx'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+
 export const userDataContext = createContext();
+
 function UserContext({ children }) {
   let [userData, setUserData] = useState(null);
   let { serverUrl } = useContext(authDataContext);
@@ -10,7 +12,7 @@ function UserContext({ children }) {
   let [createPost, setCreatePost] = useState(false);
   let [postData, setPostData] = useState([]);
   let [profileData, setProfileData] = useState([]);
-  let [postAdded, setPostAdded] = useState(0);
+  let [postAdded, setPostAdded] = useState(0); 
   let navigate = useNavigate();
 
   const currentUserData = async () => {
@@ -24,12 +26,12 @@ function UserContext({ children }) {
   }
 
   const getPost = async () => {
+    if (!serverUrl) return;
     try {
       let result = await axios.get(serverUrl + "/api/post/getpost", { withCredentials: true });
-      console.log(result);
       setPostData(result.data);
     } catch (err) {
-      console.log(err);
+      console.log("Error fetching posts:", err);
     }
   }
 
@@ -51,20 +53,17 @@ function UserContext({ children }) {
     if (userData?._id) {
       getPost();
     }
-  }, [userData]);
-
+  }, [userData, postAdded, serverUrl]); 
 
   return (
-    <div>
-      <userDataContext.Provider value={{
-        userData, setUserData, editProfileActive, setEditProfileActive,
-        createPost, setCreatePost, postData, setPostData, getPost , profileData, setProfileData,
-        getProfile, postAdded, setPostAdded
-      }}>
-        {children}
-      </userDataContext.Provider>
-    </div>
+    <userDataContext.Provider value={{
+      userData, setUserData, editProfileActive, setEditProfileActive,
+      createPost, setCreatePost, postData, setPostData, getPost , profileData, setProfileData,
+      getProfile, postAdded, setPostAdded
+    }}>
+      {children}
+    </userDataContext.Provider>
   )
 }
 
-export default UserContext
+export default UserContext;

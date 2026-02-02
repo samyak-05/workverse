@@ -6,9 +6,11 @@ import axios from 'axios';
 import { authDataContext } from '../context/AuthContext.jsx';
 
 function EditProfile() {
-    let {serverUrl} = React.useContext(authDataContext);
+    let { serverUrl } = React.useContext(authDataContext);
+    // Logic update: Destructured profileData and setProfileData to fix the reload issue
+    let { setEditProfileActive, userData, setUserData, profileData, setProfileData } = React.useContext(userDataContext);
+    
     let [saving, setSaving] = React.useState(false);
-    let {setEditProfileActive, editProfileActive, userData, setUserData} = React.useContext(userDataContext);
     let [firstName, setFirstName] = React.useState(userData.firstName || "");
     let [lastName, setLastName] = React.useState(userData.lastName || "");
     let [headline, setHeadline] = React.useState(userData.headline || "");
@@ -28,13 +30,12 @@ function EditProfile() {
     let [newExperience, setNewExperience] = React.useState({
         companyName: "",
         position: "",
-    });   
+    });
 
     const [frontendProfilePic, setFrontendProfilePic] = React.useState(userData.profilePic || dp);
     const [backendProfilePic, setBackendProfilePic] = React.useState(null);
     const [frontendCoverPic, setFrontendCoverPic] = React.useState(userData.coverPic || null);
     const [backendCoverPic, setBackendCoverPic] = React.useState(null);
-
 
     const profileImage = React.useRef();
     const coverImage = React.useRef();
@@ -68,9 +69,7 @@ function EditProfile() {
     }
 
     function removeEducation(edu){
-        if(education.includes(edu)){
-            setEducation(education.filter((e)=>e!==edu));
-        }
+        setEducation(education.filter((e)=>e!==edu));
     }
 
     function addExperience(e){
@@ -114,6 +113,7 @@ function EditProfile() {
             formData.append("skills", JSON.stringify(skills));
             formData.append("education", JSON.stringify(education));
             formData.append("experience", JSON.stringify(experience));
+            
             if(backendProfilePic){
                 formData.append("profilePic", backendProfilePic);
             }
@@ -122,8 +122,13 @@ function EditProfile() {
             }
 
             const result = await axios.put(`${serverUrl}/api/user/updateProfile`, formData, {withCredentials: true});
-            console.log("Profile updated successfully:", result.data);
+            
+            // Logic Fix: Update both states so changes appear immediately
             setUserData(result.data);
+            if (profileData?._id === result.data._id) {
+                setProfileData(result.data);
+            }
+            
             setEditProfileActive(false);
             setSaving(false);
         } catch(err) {
@@ -134,7 +139,7 @@ function EditProfile() {
 
   return (
     <div className="fixed w-[100%] h-[100vh] top-0 z-[100] flex justify-center items-center">
-        <div className='bg-black opacity-[0.6] absolute w-[100%] h-full'></div>
+        <div className='bg-black opacity-[0.6] absolute w-[100%] h-full' onClick={()=>setEditProfileActive(false)}></div>
         <div className='bg-white h-[600px] w-[90%] max-w-[500px] rounded-lg shadow-lg z-[200] relative p-[20px] overflow-auto'>
             <div>
                 <button className='absolute top-[10px] right-[10px] bg-white text-red-700 rounded-full
@@ -147,11 +152,11 @@ function EditProfile() {
             <input type='file' accept='image/*' ref={coverImage} hidden onChange={handleCoverImage}/>
 
             <div className='w-[full] h-[150px] bg-gray-500 rounded-lg mt-[20px] overflow-hidden cursor-pointer' onClick={()=>coverImage.current.click()}>
-                <img src={frontendCoverPic} alt="" className="w-full"/>
+                <img src={frontendCoverPic} alt="" className="w-full h-full object-cover"/>
             </div>
 
             <div className="absolute w-[90px] h-[90px] top-[130px] left-[30px] cursor-pointer" onClick={()=>profileImage.current.click()}>
-                <img src={frontendProfilePic} alt="" className="w-full h-full rounded-full object-cover"/>
+                <img src={frontendProfilePic} alt="" className="w-full h-full rounded-full object-cover border-4 border-white"/>
             </div>
 
             <div className="w-[20px] h-[20px] bg-[#17c1ff] absolute top-[185px] left-[95px] rounded-full flex justify-center items-center">
@@ -169,11 +174,12 @@ function EditProfile() {
                 <input type="text" placeholder='location' value={location} onChange={(e)=>setLocation(e.target.value)} className='w-full h-[50px] outline-none border rounded-md  border-gray-500 px-[10px] py-[10px] text-[18px]'/>
                 <label className="w-full font-semibold text-[20px]">Gender:</label>
                 <input type="text" placeholder='gender' value={gender} onChange={(e)=>setGender(e.target.value)} className='w-full h-[50px] outline-none  border rounded-md border-gray-500 px-[10px] py-[10px] text-[18px]'/>
+                
                 <div className='w-full flex flex-col gap[10px] p-[10px] border-2 border-gray-500'>
                     <h1 className='w-full font-semibold text-[20px]'>Skills:</h1>
                     {skills && <div className="w-full flex flex-wrap gap-[10px] mb-[10px] font-medium text-[18px]"> 
                         {skills.map((skill,idx)=>(
-                            <div key={idx} className="flex justify-center gap-[10px] bg-blue-100 border border-blue-300 p-[10px]">{skill} <button onClick={()=>removeSkill(skill)} className="bg-red-600 rounded-full w-[25px] h-[25px] text-white">X</button></div>
+                            <div key={idx} className="flex justify-center gap-[10px] bg-blue-100 border border-blue-300 p-[10px] rounded">{skill} <button onClick={()=>removeSkill(skill)} className="bg-red-600 rounded-full w-[25px] h-[25px] text-white">X</button></div>
                         ))}
                         </div>}
                     <div className='w-full flex flex-col gap-[10px]'>
@@ -184,15 +190,15 @@ function EditProfile() {
 
                 <div className='w-full flex flex-col gap[10px] p-[10px] border-2 border-gray-500'>
                     <h1 className='w-full font-semibold text-[20px]'>Education:</h1>
-                    {education && <div className="w-full flex flex-wrap gap-[10px] mb-[10px] font-medium text-[18px]"> 
-                        {education.map((education,idx)=>(
-                            <div key={idx} className="w-full flex justify-between bg-blue-100 border border-blue-300 p-[10px]">
+                    {education && <div className="w-full flex flex-col gap-[10px] mb-[10px] font-medium text-[18px]"> 
+                        {education.map((edu,idx)=>(
+                            <div key={idx} className="w-full flex justify-between bg-blue-100 border border-blue-300 p-[10px] rounded">
                                 <div className="flex flex-col">
-                                    <div><span className="font-bold text-[22px]">{education.collegeName}</span> - <span className="font-semibold text-[16px]">{education.degree}</span> </div>
-                                <div className="text-[18px] font-semibold">{education.fieldOfStudy}</div>
-                                <div className="text-[16px] font-medium">{education.startYear} - {education.endYear}</div>
+                                    <div><span className="font-bold text-[22px]">{edu.collegeName}</span> - <span className="font-semibold text-[16px]">{edu.degree}</span> </div>
+                                    <div className="text-[18px] font-semibold">{edu.fieldOfStudy}</div>
+                                    <div className="text-[16px] font-medium">{edu.startYear} - {edu.endYear}</div>
                                 </div>
-                                <div className='flex flex-col justify-center items-center'><button onClick={()=>removeEducation(education)} className="bg-red-600 rounded-full w-[25px] h-[25px] text-white">X</button></div>
+                                <div className='flex flex-col justify-center items-center'><button onClick={()=>removeEducation(edu)} className="bg-red-600 rounded-full w-[25px] h-[25px] text-white text-[14px]">X</button></div>
                             </div>
                         ))}
                         </div>}
@@ -208,14 +214,14 @@ function EditProfile() {
 
                 <div className="w-full flex flex-col gap-[10px] p-[10px] border-2 border-gray-500">
                     <h1 className="font-semibold text-[20px]">Experience:</h1>
-                    {experience && <div className="w-full flex flex-wrap gap-[10px] mb-[10px] font-medium text-[18px]">
+                    {experience && <div className="w-full flex flex-col gap-[10px] mb-[10px] font-medium text-[18px]">
                         {experience.map((exp,idx)=>(
-                            <div key={idx} className="w-full flex justify-between bg-blue-100 border border-blue-300 p-[10px]">
+                            <div key={idx} className="w-full flex justify-between bg-blue-100 border border-blue-300 p-[10px] rounded">
                                 <div className="flex flex-col">
                                     <div><span className="font-bold text-[22px]">{exp.companyName}</span></div>
-                                <div className="text-[18px] font-normal">{exp.position}</div>
+                                    <div className="text-[18px] font-normal">{exp.position}</div>
                                 </div>
-                                <div className='flex flex-col justify-center items-center'><button onClick={()=>removeExperience(exp)} className="bg-red-600 rounded-full w-[25px] h-[25px] text-white">X</button></div>
+                                <div className='flex flex-col justify-center items-center'><button onClick={()=>removeExperience(exp)} className="bg-red-600 rounded-full w-[25px] h-[25px] text-white text-[14px]">X</button></div>
                             </div>
                         ))}
                         </div>}
@@ -232,4 +238,4 @@ function EditProfile() {
   )
 }
 
-export default EditProfile
+export default EditProfile;
